@@ -1,38 +1,32 @@
 """Famous Last Words: The Funniest Epitaph.
 
-Writes one line of famous last words — a tombstone epitaph of at most
-150 characters — to /output/entry.txt.
-
-The chosen line:
-
-    I asked God for a sign. The truck had one: STOP.
-
-Why this line: it is first-person dying speech, carved-stone short, and
-the whole joke turns on one word. "Sign" starts as a prayer for a divine
-sign and lands as a road sign on the truck that killed him — a surprise
-that needs no explanation and is quotable in a single breath.
-
-Runner-up, kept in the record only: "I finally met my Maker. He said
-the warranty had expired." (Maker/warranty wordplay; strong, but the
-winner's twist lands harder on the last word.)
-
-Deterministic, offline, standard library only. The output is written
-with no trailing newline so the file holds exactly the epitaph.
+Writes one tombstone epitaph (a single line, well under the 150-character
+gate) to /output/entry.txt. Standard library only, deterministic, offline:
+every run produces byte-identical output.
 """
 
-from pathlib import Path
+import os
 
-EPITAPH = "I asked God for a sign. The truck had one: STOP."
+OUTPUT_PATH = "/output/entry.txt"
 
-OUTPUT_PATH = Path("/output/entry.txt")
+# The epitaph: dying words first ("I come in peace"), then the twist —
+# the bear answered, and its reply is quite literally set in stone.
+EPITAPH = (
+    'I said to the bear, "I come in peace." '
+    "The bear's reply is carved on the back of this stone."
+)
 
 
 def main() -> None:
-    # Enforce the gate ourselves: 1 to 150 characters, not only whitespace.
+    # Enforce the gate ourselves before writing: 1 to 150 characters,
+    # and not only whitespace.
     if not 1 <= len(EPITAPH) <= 150 or not EPITAPH.strip():
         raise ValueError("epitaph fails the 1-150 character gate")
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(EPITAPH, encoding="utf-8")
+    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+    # Write exactly the line, no trailing newline, so the file the gate
+    # measures is the epitaph and nothing else.
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as fh:
+        fh.write(EPITAPH)
 
 
 if __name__ == "__main__":
